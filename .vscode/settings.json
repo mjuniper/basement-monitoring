@@ -1,0 +1,13 @@
+{
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingModuleSource": "none"
+  },
+  "python.linting.pylintEnabled": false,
+  "python.languageServer": "Pylance",
+  "python.analysis.extraPaths": [
+    "",
+    "/Users/mjuniper/.vscode/extensions/joedevivo.vscode-circuitpython-0.1.20-darwin-arm64/stubs",
+    "/Users/mjuniper/Library/Application Support/Code/User/globalStorage/joedevivo.vscode-circuitpython/bundle/20230318/adafruit-circuitpython-bundle-py-20230318/lib"
+  ],
+  "circuitpython.board.version": "8.0.0-beta.6"
+}
