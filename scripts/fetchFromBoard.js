@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { TOKEN } from './secrets.js'
 
 console.log('fetching from board...')
 
@@ -11,8 +12,7 @@ const IGNORE = [
   '._code.py',
   '._secrets.py',
   '._settings.toml',
-  '._boot_out.txt',
-  'lib'
+  '._boot_out.txt'
 ];
 
 /*
@@ -31,7 +31,7 @@ async function fetchFS (path = '') {
         // 'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/111.0",
         Accept: "application/json",
         // 'Accept-Language': 'en-US,en;q=0.5',
-        Authorization: 'Basic OlNFTGVnZW5kMDI='
+        Authorization: `Basic ${TOKEN}`
     },
     // "referrer": "http://cpy-5970ec.local/code/",
     // "method": 'GET',
@@ -62,7 +62,7 @@ async function processFiles(path) {
 
   for (const entry of data) {
     if (!IGNORE.includes(entry.name)) {
-      const newPath = path ? `${path}/${entry.name}` : `${entry.name}`;
+      const newPath = `${path}${entry.name}`;
       if (entry.directory) {
         if (!existsSync(newPath)) {
           mkdirSync(newPath);
