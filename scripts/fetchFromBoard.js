@@ -70,7 +70,7 @@ async function processFiles(path) {
           mkdirSync(newPath);
         }
         // recursively call this function with the new path
-        console.log(`recursively calling doStuff with ${newPath}/`);
+        console.log(`recursively calling processFiles with ${newPath}/`);
         await processFiles(`${newPath}/`);
       } else {
         // fetch the file and write it to the file system
