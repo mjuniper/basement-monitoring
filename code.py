@@ -89,14 +89,14 @@ while True:
     # check if the battery voltage / % is below max - that means we are on battery power
     try:
         batt = lc709203.cell_percent
-        print(f"Battery percentage: {batt:.1f}%")
+        print(f"Battery percentage: {batt:.1f}%\n")
         if batt < 99 and not hasSentBatteryNotification:
             notification_reporter.sendNotification("Basement monitor may be on battery power.")
             hasSentBatteryNotification = True
         elif batt > 99:
             hasSentBatteryNotification = False
     except Exception as e:
-        print('Battery check error: ' + str(e))
+        print('Battery check error: ' + str(e) + '\n')
     # #####
 
     pixel.fill((0, 0, 0))

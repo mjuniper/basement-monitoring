@@ -4,6 +4,8 @@ import { TOKEN } from './secrets.js'
 
 console.log('fetching from board...')
 
+// these are files we want to not even bring down from the board
+// there are other files we may bring down but gitignore (secrets.py & settings.toml) 
 const IGNORE = [
   '.fseventsd',
   '.metadata_never_index',
@@ -33,8 +35,8 @@ async function fetchFS (path = '') {
         // 'Accept-Language': 'en-US,en;q=0.5',
         Authorization: `Basic ${TOKEN}`
     },
-    // "referrer": "http://cpy-5970ec.local/code/",
-    // "method": 'GET',
+    "referrer": "http://cpy-5970ec.local/code/",
+    "method": 'GET',
     // 'mode': 'cors'
   });
   return resp.json();
@@ -47,7 +49,7 @@ async function fetchFile (file = '') {
         // "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/111.0",
         Accept: '*/*',
         // "Accept-Language": "en-US,en;q=0.5",
-        'Authorization': 'Basic OlNFTGVnZW5kMDI='
+        'Authorization': `Basic ${TOKEN}`
     },
     // "referrer": "http://cpy-5970ec.local/code/",
     // "method": "GET",

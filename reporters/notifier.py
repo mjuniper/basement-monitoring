@@ -11,14 +11,16 @@ class NotificationReporter:
 
     def __init__(self, params):
         self.threshold = params['threshold']
+        self.token = params['pushovertoken']
+        self.user = params['pushoveruser']
         
         pool = socketpool.SocketPool(wifi.radio)
         self.session = adafruit_requests.Session(pool, ssl.create_default_context())
 
     def sendNotification (self, msg):
         data = {
-            "token": "aqme1so9k58wnnb412zuia1pgr1jae",
-            "user": "nDvqQrj6o0u8fMbXK2oTFzVdTSKHvU",
+            "token": self.token,
+            "user": self.user,
             "message": msg,
         }
         response = self.session.post("https://api.pushover.net:443/1/messages.json", json=data)
