@@ -30,13 +30,10 @@ async function fetchFS (path = '') {
   const resp = await fetch(url, {
     // credentials: "include",
     headers: {
-        // 'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/111.0",
         Accept: "application/json",
-        // 'Accept-Language': 'en-US,en;q=0.5',
         Authorization: `Basic ${TOKEN}`
     },
     "referrer": "http://cpy-5970ec.local/code/",
-    "method": 'GET',
     // 'mode': 'cors'
   });
   return resp.json();
@@ -46,20 +43,15 @@ async function fetchFile (file = '') {
   const resp = await fetch(`http://cpy-5970ec.local/fs/${file}`, {
     // "credentials": "include",
     headers: {
-        // "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/111.0",
         Accept: '*/*',
-        // "Accept-Language": "en-US,en;q=0.5",
         'Authorization': `Basic ${TOKEN}`
     },
-    // "referrer": "http://cpy-5970ec.local/code/",
-    // "method": "GET",
     // "mode": "cors"
   });
   return resp.text();
 }
 
-async function processFiles(path) {
-  path = path || '';
+async function processFiles(path = '') {
   const data = await fetchFS(path);
 
   for (const entry of data) {
