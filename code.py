@@ -12,6 +12,7 @@ from reporters.display import DisplayReporter
 from reporters.db import InfluxDbReporter
 from reporters.notifier import NotificationReporter
 from adafruit_lc709203f import LC709203F, PackSize
+import gc
 
 # web workflow info: https://learn.adafruit.com/getting-started-with-web-workflow-using-the-code-editor/device-setup
 
@@ -89,7 +90,8 @@ while True:
     # check if the battery voltage / % is below max - that means we are on battery power
     try:
         batt = lc709203.cell_percent
-        print(f"Battery percentage: {batt:.1f}%\n")
+        print(f"Battery percentage: {batt:.1f}%")
+        print(f"Free memory: {gc.mem_free() / 1024}Kb\n")
         if batt < 99 and not hasSentBatteryNotification:
             notification_reporter.sendNotification("Basement monitor may be on battery power.")
             hasSentBatteryNotification = True
