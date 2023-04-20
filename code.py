@@ -103,4 +103,11 @@ while True:
 
     pixel.fill((0, 0, 0))
 
+    # i think i have a memory leak... or maybe that is just the way python works???
+    # free memory continuously falls with every iteration of the loop until it gets down to a few k
+    # then it goes back up - presumably because garbage collection happened
+    # if i manually do garbage collection as below, it stays high
+    # but i think we will let garbage collection happen on its own
+    # gc.collect()
+
     time.sleep(5)
