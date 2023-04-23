@@ -10,6 +10,12 @@ class DisplayReporter:
         
         self.touch1 = touchio.TouchIn(board.A4)
         self.touch2 = touchio.TouchIn(board.A5)
+        # these are supposed to self calibrate when the board starts up but it sometimes does not work
+        # see: https://learn.adafruit.com/adafruit-esp32-s2-tft-feather/capacitive-touch#setting-touch-threshold-manually-3112099
+        self.touch1.threshold = self.touch1.raw_value + 200
+        self.touch2.threshold = self.touch2.raw_value + 200
+
+        # self.touch_info = f"touch1:: raw value: {self.touch1.raw_value}, threshold: {self.touch1.threshold}, value: {self.touch1.value}touch2:: raw value: {self.touch2.raw_value}, threshold: {self.touch2.threshold}, value: {self.touch2.value}\n"
       
         scale = 2
         self.text_area = bitmap_label.Label(terminalio.FONT, text="", scale=scale)
@@ -23,6 +29,9 @@ class DisplayReporter:
     def toggleDisplay (self):
         shouldShow = self.touch1.value or self.touch2.value
 
+        # print(f"touch1 raw value: {self.touch1.raw_value}")
+        # print(f"touch2 raw value: {self.touch2.raw_value}")
+
         if shouldShow:
             board.DISPLAY.brightness = 0.4
         else:
@@ -33,6 +42,7 @@ class DisplayReporter:
         self.text_area.color = 0x00FFFF
         self.text_area.text = msg
         print(msg + '\n')
+        # print(self.touch_info)
 
     def showError (self, msg):
         self.toggleDisplay()

@@ -7,14 +7,7 @@ console.log('fetching from board...')
 // these are files we want to not even bring down from the board
 // there are other files we may bring down but gitignore (secrets.py & settings.toml) 
 const IGNORE = [
-  '.fseventsd',
-  '.metadata_never_index',
-  '.Trashes',
-  'boot_out.txt',
-  '._code.py',
-  '._secrets.py',
-  '._settings.toml',
-  '._boot_out.txt'
+  'boot_out.txt'
 ];
 
 /*
@@ -51,11 +44,20 @@ async function fetchFile (file = '') {
   return resp.text();
 }
 
+function shouldIgnore (name) {
+  let result = IGNORE.includes(name);
+  // special handling for . files
+  if (name.startsWith('.')){
+    result = true;
+  }
+  return result;
+}
+
 async function processFiles(path = '') {
   const data = await fetchFS(path);
 
   for (const entry of data) {
-    if (!IGNORE.includes(entry.name)) {
+    if (!shouldIgnore(entry.name)) {
       const newPath = `${path}${entry.name}`;
       if (entry.directory) {
         if (!existsSync(newPath)) {
