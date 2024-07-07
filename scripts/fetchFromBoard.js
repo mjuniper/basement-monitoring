@@ -13,7 +13,7 @@ const IGNORE = [
 /*
   Workflow:
     - edit code in the browser with "web workflow"
-    - execute this script to copy code to this directory
+    - execute this script to copy code to this directory (`npm run fetch-from-board`)
     - use normal git workflow to commit and push upstream
 */
 

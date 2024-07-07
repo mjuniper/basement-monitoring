@@ -27,8 +27,10 @@ pixel.brightness = .02
 # #####
 reporters = []
 def report(data):
-    for reporter in reporters:
-        reporter.report(data)
+    # the ambient pressure sensor gets wonky sometimes...
+    if data["temp"] > 0:
+        for reporter in reporters:
+            reporter.report(data)
 
 display_reporter = DisplayReporter(secrets)
 reporters.append(display_reporter)
