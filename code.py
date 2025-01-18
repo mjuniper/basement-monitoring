@@ -16,6 +16,13 @@ import gc
 
 # web workflow info: https://learn.adafruit.com/getting-started-with-web-workflow-using-the-code-editor/device-setup
 
+# i had this at every 5 seconds - that is a little silly
+# increasing to 5 minutes -the downside is that, the way i have it coded,
+# it will be hard to get the display to show anything because you have to be 
+# holding the button when it does the pass through the loop
+# there are ways around that
+interval = 2 * 60 # 2 minites
+
 # #####
 # setup neopixel
 # #####
@@ -31,6 +38,12 @@ def report(data):
     if data["temp"] > 0:
         for reporter in reporters:
             reporter.report(data)
+    else:
+        print("Data out of range....")
+        print(f"  - Ambient temp: {data["temp"]}F")
+        print(f"  - Ambient pressure: {data["ambient"]}")
+        print(f"  - Internal pressure: {data["internal"]}")
+        print(f"  - Delta: {data["delta"]}\n")
 
 display_reporter = DisplayReporter(secrets)
 reporters.append(display_reporter)
@@ -61,6 +74,8 @@ ambient = adafruit_bmp280.Adafruit_BMP280_I2C(stemma_i2c)
 lc709203 = LC709203F(stemma_i2c)
 lc709203.pack_size = PackSize.MAH100
 hasSentBatteryNotification = False
+
+time.sleep(5)
 
 # #####
 # loop!
@@ -112,4 +127,4 @@ while True:
     # but i think we will let garbage collection happen on its own
     # gc.collect()
 
-    time.sleep(5)
+    time.sleep(interval)
