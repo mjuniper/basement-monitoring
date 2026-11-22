@@ -1,13 +1,18 @@
 import fetch from 'node-fetch';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { TOKEN } from './secrets.js'
+import { join } from 'node:path';
+import { ROOT, authHeader, boardUrl } from './board.js';
 
-console.log('fetching from board...')
+console.log('fetching from board...');
 
-// these are files we want to not even bring down from the board
-// there are other files we may bring down but gitignore (secrets.py & settings.toml) 
+const Authorization = authHeader();
+
+// these are things we don't want to bring down from the board
+// (lib/ is managed with circup, and its .mpy files are binary)
+// there are other files we may bring down but gitignore (settings.toml)
 const IGNORE = [
-  'boot_out.txt'
+  'boot_out.txt',
+  'lib'
 ];
 
 /*
@@ -18,50 +23,43 @@ const IGNORE = [
 */
 
 async function fetchFS (path = '') {
-  const url = `http://cpy-5970ec.local/fs/${path}`;
-  console.log(`fetching filesystem from ${url}`)
+  const url = boardUrl(path);
+  console.log(`fetching filesystem from ${url}`);
   const resp = await fetch(url, {
-    // credentials: "include",
     headers: {
-        Accept: "application/json",
-        Authorization: `Basic ${TOKEN}`
-    },
-    "referrer": "http://cpy-5970ec.local/code/",
-    // 'mode': 'cors'
+      Accept: 'application/json',
+      Authorization
+    }
   });
-  return resp.json();
+  const data = await resp.json();
+  // newer CircuitPython wraps the listing in an object, older versions return the array itself
+  return Array.isArray(data) ? data : data.files;
 }
 
 async function fetchFile (file = '') {
-  const resp = await fetch(`http://cpy-5970ec.local/fs/${file}`, {
-    // "credentials": "include",
+  const resp = await fetch(boardUrl(file), {
     headers: {
-        Accept: '*/*',
-        'Authorization': `Basic ${TOKEN}`
-    },
-    // "mode": "cors"
+      Accept: '*/*',
+      Authorization
+    }
   });
-  return resp.text();
+  return Buffer.from(await resp.arrayBuffer());
 }
 
 function shouldIgnore (name) {
-  let result = IGNORE.includes(name);
   // special handling for . files
-  if (name.startsWith('.')){
-    result = true;
-  }
-  return result;
+  return IGNORE.includes(name) || name.startsWith('.');
 }
 
-async function processFiles(path = '') {
+async function processFiles (path = '') {
   const data = await fetchFS(path);
 
   for (const entry of data) {
     if (!shouldIgnore(entry.name)) {
       const newPath = `${path}${entry.name}`;
       if (entry.directory) {
-        if (!existsSync(newPath)) {
-          mkdirSync(newPath);
+        if (!existsSync(join(ROOT, newPath))) {
+          mkdirSync(join(ROOT, newPath));
         }
         // recursively call this function with the new path
         console.log(`recursively calling processFiles with ${newPath}/`);
@@ -69,11 +67,10 @@ async function processFiles(path = '') {
       } else {
         // fetch the file and write it to the file system
         console.log(`writing ${newPath}`);
-        const file = await fetchFile(newPath);
-        writeFileSync(newPath, file);
+        writeFileSync(join(ROOT, newPath), await fetchFile(newPath));
       }
     }
-  };
+  }
 }
 
-processFiles();
+await processFiles();

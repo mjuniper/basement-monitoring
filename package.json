@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "fetch-from-board": "node scripts/fetchFromBoard"
+    "fetch-from-board": "node scripts/fetchFromBoard",
+    "deploy": "node scripts/deployToBoard",
+    "circup": "node scripts/circup"
   },
   "type": "module",
   "author": "",
