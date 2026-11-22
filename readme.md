@@ -16,6 +16,8 @@ Circuitpython web workflow: http://esp-radon.local/code/
   or the sensor loop.
   - **Display** (`reporters/display.py`): see below.
   - **InfluxDB** (`reporters/db.py`): line protocol over HTTP to InfluxDB 1.x.
+    Fields: `internal`, `ambient`, `delta` (hPa), `temp` (F), `battery` (%) and
+    `battery_voltage` (V).
   - **Notifications** (`reporters/notifier.py`, Pushover): once a day at most while
     the delta is out of range. The once-a-day timer starts only after Pushover
     accepts the message, so a failed send is retried.
@@ -48,10 +50,11 @@ off when all is well).
 - **Watchdog:** resets the board if the main loop stalls. The loop feeds it, but
   only while there has been a good pressure sensor read within 3x the sampling
   interval (60 second minimum), so a dead sensor or an uncaught exception reboots
-  the board, but a Wi-Fi or InfluxDB outage does not. The hardware timeout is
-  the same limit. The watchdog keeps running
-  across code reloads, with its timeout unchanged until the next hard reset. After a watchdog reset the error log shows
-  "watchdog: restarted after stall" until the first good read.
+  the board, but a Wi-Fi or InfluxDB outage does not. The hardware timeout is that
+  same limit. Once armed, the watchdog keeps running across code reloads (only a
+  hard reset stops it), so a reload keeps the existing timeout. After a watchdog
+  reset the error log shows "watchdog: restarted after stall" until the first good
+  read.
 - **Wi-Fi:** `net.py` reconnects whenever the connection is down and builds a new
   HTTP session after a reconnect or a failed request. Requests time out (5 seconds
   for InfluxDB, 10 for Pushover) and failures show up in the error log. After 12
@@ -91,8 +94,8 @@ The board is hard to reach, so USB mass storage is disabled and everything goes
 over Wi-Fi with web workflow. Run `npm install` once. All of these are also VS
 Code tasks (**Terminal > Run Task**, [.vscode/tasks.json](.vscode/tasks.json)):
 
-- **deploy** (`npm run deploy`): copy `settings.toml`, `net.py`, `boot.py`,
-  `reporters/*.py` and `code.py` to the board. The password comes from your local
+- **deploy** (`npm run deploy`): copy `settings.toml`, `net.py`,
+  `adafruit_bmp280.py`, `boot.py`, `reporters/*.py` and `code.py` to the board. The password comes from your local
   `settings.toml`. CircuitPython reloads as files land (so you may see it restart
   a few times); `code.py` is copied last. `boot.py` only takes effect after a reset.
 - **fetch_from_board** (`npm run fetch-from-board`): copy files from the board to
@@ -102,8 +105,8 @@ Code tasks (**Terminal > Run Task**, [.vscode/tasks.json](.vscode/tasks.json)):
   first). `add_deps` installs the libraries `code.py`, `net.py` and the reporters
   import, then writes `requirements.txt`; `install_deps` installs from it onto a
   fresh board.
-- **deploy_usb**: the same copy over a mounted `/Volumes/CIRCUITPY`, for when you
-  have the board on your desk in recovery mode.
+- **deploy_usb**, **add_deps_usb**, **install_deps_usb**: the same, over a mounted
+  `/Volumes/CIRCUITPY`, for when you have the board on your desk in recovery mode.
 
 ### Recovery mode (USB mass storage)
 

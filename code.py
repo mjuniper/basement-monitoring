@@ -137,9 +137,9 @@ def init_sensors():
   return internal, ambient
 
 # Don't let a missing sensor crash code.py (that would leave the board sitting on
-# a traceback). Show the error on screen and keep trying. The watchdog is NOT fed
-# in this loop, so if the sensors still aren't there when it times out, the board
-# reboots, which also clears a stuck I2C bus.
+# a traceback). Show the error on screen and keep trying. The watchdog is only fed
+# for the first few minutes of this (see feed_watchdog), so if the sensors still
+# aren't there by then, the board reboots, which also clears a stuck I2C bus.
 display_reporter.showMessage("Starting sensors")
 sensors = None
 while sensors is None:
